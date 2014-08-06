@@ -1,0 +1,366 @@
+#=======================================================================================
+#	FileName    : imgmake
+#	Description : Make img
+#=======================================================================================
+#
+#	Marvell Board Support Package
+#	Copyright (c) emdoor, Inc.
+#	ALL RIGHTS RESERVED
+#
+#=======================================================================================
+#定义项目kernel defconfig 数组
+declare -a project_name_array
+#定义项目kernel defconfig 配置数组
+declare -a kernel_defconfig_array
+#定义项目obm/uboot/kernel头文件设置数组
+declare -a obm_uboot_kernel_include_array
+#定义项目头文件设置数组
+declare -a board_include_array
+#定义项目排名数组
+declare -a project_num_array
+#定义项目生成路径数组
+declare -a out_dir_array
+#定义项目编译数组
+declare -a luncharg_dir_array
+IMGMAKENAME_ARRAY=("ALL" "UIMAGE" "RECOVERY" "SYSTEM" "UBOOT" "OBM" "UPDATE")
+function set_array()
+{
+	local var=`cat project.conf`	
+	local num=1	
+	local temp_var
+	
+	for i in $var
+	do
+		if [ "project_name" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			project_name_array[`expr $num - 1`]=$temp_var
+			project_num_array[`expr $num - 1`]=`expr $num - 1`
+			num=`expr $num + 1`
+		fi
+	done
+	
+	num=1	
+	for i in $var
+	do
+		if [ "kernel_defconfig" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			kernel_defconfig_array[`expr $num - 1`]=$temp_var
+			num=`expr $num + 1`
+		fi
+	done
+	
+	num=1
+	for i in $var
+	do
+		if [ "obm_uboot_kernel_include" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			obm_uboot_kernel_include_array[`expr $num - 1`]=$temp_var
+			num=`expr $num + 1`
+		fi
+	done
+	
+	num=1
+	for i in $var
+	do
+		if [ "board_incldue" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			board_include_array[`expr $num - 1`]=$temp_var
+			num=`expr $num + 1`
+		fi
+	done
+	
+	num=1
+	for i in $var
+	do
+		if [ "out_dir" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			out_dir_array[`expr $num - 1`]=$temp_var
+			num=`expr $num + 1`
+		fi
+	done
+	
+	num=1
+	for i in $var
+	do
+		if [ "luncharg_dir" = "${i%%=*}" ]; then
+			temp_var=${i##*=}
+			temp_var=${temp_var%%:*}
+			luncharg_dir_array[`expr $num - 1`]=$temp_var
+			num=`expr $num + 1`
+		fi
+	done
+	
+}
+
+function print_make_board()
+{
+    local num=1;
+	echo  "     "
+    echo  "Please enter a number to select the  Product name:"
+    echo  "     "
+	for i in ${project_name_array[@]}
+	do
+	echo "$num $i"
+	num=`expr $num + 1`
+	done
+}
+
+function print_make_menu()
+{
+    echo  "     "
+    echo  "Please enter a number to select the function:"
+    echo  "     "
+    echo  "1.Make all"
+    echo  "2.Make boot.img"
+    echo  "3.Make droidboot.img"
+    echo  "4.Make system.img"
+}
+
+function check_forcearg()
+{
+  if [ "$1" = "FORCE" ] ; then
+     return 1
+  fi 
+  if [ "$2" = "FORCE" ] ; then
+     return 1
+  fi
+
+  if [ "$3" = "FORCE" ] ; then
+      return 1
+  fi
+  return 0
+}
+
+function show_usage()
+{
+	echo "Usage: imgmake [product_name] [argument] [forcedefconfig?]"
+}
+function check_imgmake_num()
+{ 
+  for imgnum in ${project_name_array[@]}
+    do
+      if [ $1 == $imgnum ]; then
+        return 1
+      else
+        continue
+      fi
+    done
+  return 0
+}
+
+function check_board_name()
+{ local j=0
+
+  for board in ${project_name_array[@]}
+    do
+       j=$((j+1))
+      if [ $1 == $board ]; then
+        return $j
+      else
+        continue
+      fi
+    done
+  return 0
+}
+
+function check_imgmake_name()
+{ 
+  local k=0
+  for imgname in ${IMGMAKENAME_ARRAY[@]}
+    do
+       k=$((k+1))
+      if [ $1 == $imgname ]; then
+        return $k
+      else
+        continue
+      fi
+    done
+
+   echo "Unsupported imgname($1)!"
+   echo "Current supported imgname is listed below:"
+   for imgname in ${IMGMAKENAME_ARRAY[@]}
+	do 
+	echo "  $imgname"
+	done
+  return 0
+}
+
+function check_argument()
+{
+    local retnum
+	check_board_name $1
+    retnum=$?
+	if [ $retnum -eq 0 ]; then 
+		echo "Unsupported board($1)!"
+		echo "Current supported board is listed below:"
+		for board in ${project_name_array[@]}
+		do 
+			echo "  $board"
+		done
+		return 0
+	else
+		return $retnum
+	fi
+
+}
+
+function lunch_make()
+{
+    local answer
+    if [ $forcedefconfig -eq 1 ] ; then
+          echo "-----------------"
+        . build/imgmake/CLEAN_PreMake $4
+    fi
+    answer=$2
+    if [ "$answer" = "1" ]
+    then
+        . build/imgmake/allmake $1 $3 $4 $5
+    elif [ "$answer" = "2" ]
+    then
+        . build/imgmake/bootmake $1 $3 $4 $5
+    elif [ "$answer" = "3" ]
+    then
+        . build/imgmake/recoverymake $1 $3 $4 $5
+    elif [ "$answer" = "4" ]
+    then
+        . build/imgmake/systemmake $1 $3 $4 $5
+    else
+        echo
+        echo "Please enter a number between 1-4!"
+        echo
+    fi
+}
+
+function set_headfile()
+{
+#  tempfile="boot/uboot/include/platform.h"
+#  echo "#ifndef __51PLATFORM_H_" > $tempfile
+#  echo "#define __51PLATFORM_H_" >> $tempfile 
+#  echo "#define  $1    1" >> $tempfile
+#  echo "#define  $2    1" >> $tempfile
+#  echo "#define  $3    1" >> $tempfile
+#  echo "#endif" >> $tempfile
+  
+#  tempfile1="boot/uboot/include/51boot_platform.h"
+#  if [ -e $tempfile1 ]
+#  then
+#	rm $tempfile1
+#  fi
+#  cp $tempfile $tempfile1
+
+  tempfile2="linux/kernel/include/linux/51Board_Project.h"
+  if [ -e $tempfile2 ]
+  then
+	rm $tempfile2
+  fi
+  cp $tempfile  $tempfile2
+
+  if [ "`ls release/*.h`" = "" ]
+  then
+	echo "release/*.h file don't exit"
+  else
+    rm release/*.h
+  fi
+  
+  cp $tempfile release/$1.h
+}
+function set_deviceproject()
+{
+	if [ -e device/marvell/$1/emdoor_config.mk ]; then
+	rm device/marvell/$1/emdoor_config.mk
+	fi
+	echo "Kernel_Defconfig := true" > device/marvell/$1/emdoor_config.mk
+	echo "KERNEL_DEFCONFIG_FILE := $2" >> device/marvell/$1/emdoor_config.mk
+	echo "PLATFORM_CONFIG := $3" >> device/marvell/$1/emdoor_config.mk	
+}
+
+function main_make()
+{
+    local answer1
+    local answer2
+    local imgnum
+
+    product=`echo $1 | tr [:lower:] [:upper:]`
+    imgarg=`echo $2 | tr [:lower:] [:upper:]`
+	
+    forcedefconfig=`echo $3 | tr [:lower:] [:upper:]`
+	
+	#将 project.conf 文件里面的project config 文件读取到数组当中。
+	set_array
+	#
+    check_forcearg $product $imgarg $forcedefconfig
+	
+	if [ $? -eq 1 ] ; then
+		forcedefconfig=1
+	else
+		forcedefconfig=0
+	fi
+	
+    if [ "$1" ] ; then
+       if [ $product == "HELP" ] ; then
+             show_usage
+             return 0
+       fi
+       check_imgmake_num $1
+       if [ $? -eq 0 ]; then
+           check_argument $product
+           answer1=$?
+           if [ $answer1 -eq 0 ]; then
+             print_make_board
+             echo -n "Which would you like? [make] "
+             read answer1
+           fi
+        fi
+    else
+        print_make_board
+        echo -n "Which would you like? [make] "
+        read answer1
+    fi
+	
+    answer1=$((answer1-1)) 
+    product=${project_name_array[$answer1]}  
+    boardarg=${board_include_array[$answer1]}
+    luncharg=${luncharg_dir_array[$answer1]}
+    headername=${obm_uboot_kernel_include_array[answer1]}
+	kernel_defconfig=${kernel_defconfig_array[answer1]}
+    outdirname=${out_dir_array[answer1]}
+
+    if [ "$2" ] ; then
+        check_imgmake_num $2
+         if [ $? -eq 0 ]; then
+           img=`echo $2 | tr [:lower:] [:upper:]`
+           check_imgmake_name $img
+           imgnum=$?
+           if [ $imgnum -eq 0 ] ; then
+                  print_make_menu
+                  echo -n "Which would you like? [make] "
+                  read answer2
+           else
+               answer2=$imgnum
+           fi
+        else
+          answer2=$2
+        fi
+    else
+        print_make_menu
+        echo -n "Which would you like? [make] "
+        read answer2
+    fi
+	echo "imgmake product is $product"
+	echo "imgmake forcelunch is $forcedefconfig"
+	echo "imgmake lunch is $luncharg"
+	echo "imgmake board name is $boardarg"
+	echo "imgmake img name is $answer2"
+	echo "imgmake make prename is $headername"
+	echo "imgmake outdirname is $outdirname"
+	set_headfile $headername $boardarg $product
+	#set_deviceproject $outdirname $kernel_defconfig $boardarg 
+	lunch_make $boardarg $answer2 $forcedefconfig $luncharg $outdirname	
+	
+}
+main_make $1 $2 $3

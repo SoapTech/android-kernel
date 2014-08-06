@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flashfile version="1">
+    <id>fastboot</id>
+    <platform>em_i8170</platform>
+        <code_group name="esp">
+            <file TYPE="esp">
+                <name>esp.img</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <code_group name="droidboot">
+            <file TYPE="droidboot">
+                <name>droidboot.img</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <code_group name="boot">
+            <file TYPE="boot">
+                <name>boot.img</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <code_group name="recovery">
+            <file TYPE="recovery">
+                <name>recovery.img</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <code_group name="system">
+            <file TYPE="system">
+                <name>system.img</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <code_group name="INSTALLER">
+            <file TYPE="INSTALLER">
+                <name>installer.cmd</name>
+                <version>eng.jim</version>
+            </file>
+        </code_group>
+        <buildproperties>
+            <property name="ro.build.id" value="KOT49H"/>
+            <property name="ro.build.display.id" value="em_i8170_64-eng 4.4.2 KOT49H eng.jim.20140613.193308 dev-keys"/>
+            <property name="ro.build.version.incremental" value="eng.jim.20140613.193308"/>
+            <property name="ro.build.version.sdk" value="19"/>
+            <property name="ro.build.version.codename" value="REL"/>
+            <property name="ro.build.version.release" value="4.4.2"/>
+            <property name="ro.build.date" value="Fri Jun 13 19:33:52 CST 2014"/>
+            <property name="ro.build.date.utc" value="1402659232"/>
+            <property name="ro.build.type" value="eng"/>
+            <property name="ro.build.user" value="jim"/>
+            <property name="ro.build.host" value="build-168"/>
+            <property name="ro.build.tags" value="dev-keys"/>
+            <property name="ro.product.model" value="em_i8170"/>
+            <property name="ro.product.brand" value="intel"/>
+            <property name="ro.product.name" value="em_i8170_64"/>
+            <property name="ro.product.device" value="em_i8170"/>
+            <property name="ro.product.board" value="baylake"/>
+            <property name="ro.product.cpu.abi" value="x86"/>
+            <property name="ro.product.manufacturer" value="intel"/>
+            <property name="ro.product.locale.language" value="en"/>
+            <property name="ro.product.locale.region" value="US"/>
+            <property name="ro.wifi.channels" value=""/>
+            <property name="ro.board.platform" value="baytrail"/>
+            <property name="ro.build.product" value="em_i8170"/>
+            <property name="ro.build.description" value="em_i8170_64-eng 4.4.2 KOT49H eng.jim.20140613.193308 dev-keys"/>
+            <property name="ro.build.fingerprint" value="intel/em_i8170_64/em_i8170:4.4.2/KOT49H/eng.jim.20140613.193308:eng/dev-keys"/>
+            <property name="ro.build.characteristics" value="nosdcard,tablet"/>
+            <property name="ro.streaming.video.drs" value="true"/>
+            <property name="ro.disablelonglongpress" value="true"/>
+            <property name="keyguard.no_require_sim" value="true"/>
+            <property name="ro.com.android.dataroaming" value="true"/>
+            <property name="ro.com.android.dateformat" value="MM-dd-yyyy"/>
+            <property name="ro.config.ringtone" value="Themos.ogg"/>
+            <property name="ro.config.notification_sound" value="Proxima.ogg"/>
+            <property name="ro.config.alarm_alert" value="Cesium.ogg"/>
+            <property name="ro.carrier" value="unknown"/>
+            <property name="dalvik.vm.heapstartsize" value="16m"/>
+            <property name="dalvik.vm.heapgrowthlimit" value="192m"/>
+            <property name="dalvik.vm.heapsize" value="512m"/>
+            <property name="dalvik.vm.heaptargetutilization" value="0.75"/>
+            <property name="dalvik.vm.heapminfree" value="2m"/>
+            <property name="dalvik.vm.heapmaxfree" value="8m"/>
+            <property name="dalvik.jit.code_cache_size" value="1048576"/>
+            <property name="drm.service.enabled" value="true"/>
+            <property name="persist.tel.hot_swap.support" value="true"/>
+            <property name="ro.opengles.version" value="196608"/>
+            <property name="ro.sf.lcd_density" value="160"/>
+            <property name="ro.blankphone_id" value="1"/>
+            <property name="ro.spid.gps.pmm" value="disabled"/>
+            <property name="ro.spid.gps.tty" value="ttyMFD1"/>
+            <property name="persist.sys.dalvik.vm.lib" value="libdvm.so"/>
+            <property name="system.debug.plugins" value="libcrash.so"/>
+            <property name="ro.ril.status.polling.enable" value="0"/>
+            <property name="ro.product.cpu.abi2" value="armeabi-v7a"/>
+            <property name="ro.config.personality" value="compat_layout"/>
+            <property name="rs.gpu.renderscript" value="1"/>
+            <property name="rs.gpu.filterscript" value="1"/>
+            <property name="rs.gpu.rsIntrinsic" value="1"/>
+            <property name="ro.kernel.android.checkjni" value="1"/>
+            <property name="net.bt.name" value="Android"/>
+            <property name="dalvik.vm.stack-trace-file" value="/data/anr/traces.txt"/>
+            <property name="ro.intel.corp.email" value="1"/>
+        </buildproperties>
+        <command>
+            <string>fastboot erase cache</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Erase 'cache' partition.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot erase system</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Erase 'system' partition.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot erase data</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Erase 'data' partition.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot flash ESP $esp_file</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Flashing 'ESP' image.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot flash fastboot $droidboot_file</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Flashing 'fastboot' image.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot flash boot $boot_file</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Flashing 'boot' image.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot flash recovery $recovery_file</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Flashing 'recovery' image.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot flash system $system_file</string>
+            <timeout>420000</timeout>
+            <retry>2</retry>
+            <description>Flashing 'system' image.</description>
+            <mandatory>1</mandatory>
+        </command>
+        <command>
+            <string>fastboot continue</string>
+            <timeout>60000</timeout>
+            <retry>2</retry>
+            <description>Rebooting now.</description>
+            <mandatory>1</mandatory>
+        </command>
+</flashfile>

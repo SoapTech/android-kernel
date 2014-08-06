@@ -1,0 +1,2 @@
+source "../modules/drivers/staging/matrix/Kconfig"
+source "../modules/drivers/staging/sep/Kconfig"

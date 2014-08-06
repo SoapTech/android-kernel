@@ -1,0 +1,2 @@
+# Intel MID GPS
+source "../modules/drivers/gps/intel_mid_gps/Kconfig"
